@@ -18,7 +18,7 @@ public class G3_Zaka_Sergi {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-         File fichero = new File("D:\\Grado Superior ASIX1\\GitKraken\\G3_Zaka_Sergi\\classrooms.csv");
+         File fichero = new File("../classrooms.csv");
         
         try {
             /*
