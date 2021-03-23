@@ -30,7 +30,7 @@ public class G3_Zaka_Sergi {
             * no falle a causa de un fichero con palabras con acentos
             * Scanner lectorFichero = new Scanner(fichero, "ISO-8859-1");
             */
-            Scanner lectorFichero = new Scanner(fichero, "ISO-8859-1");
+            Scanner lectorFichero = new Scanner(fichero);
             
             while(lectorFichero.hasNext()) {
                 System.out.println(lectorFichero.nextLine());
