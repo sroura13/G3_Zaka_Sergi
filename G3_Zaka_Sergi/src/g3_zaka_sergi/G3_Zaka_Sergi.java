@@ -18,13 +18,17 @@ public class G3_Zaka_Sergi {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-         File fichero = new File("../classrooms.csv");
+        leerFichero();
+    }
+
+    public static void leerFichero() {
+        File fichero = new File("../classrooms.csv");
         
         try {
             /*
-             * ISO-8859-1 Sirve para que al momento de ejecutar el programa
-             * no falle a causa de un fichero con palabras con acentos
-             * Scanner lectorFichero = new Scanner(fichero, "ISO-8859-1");
+            * ISO-8859-1 Sirve para que al momento de ejecutar el programa
+            * no falle a causa de un fichero con palabras con acentos
+            * Scanner lectorFichero = new Scanner(fichero, "ISO-8859-1");
             */
             Scanner lectorFichero = new Scanner(fichero, "ISO-8859-1");
             
@@ -35,7 +39,7 @@ public class G3_Zaka_Sergi {
             /**
              * Este lector sirve para poder cerrar el fichero, aunque java
              * ya cierra el fichero de por si
-            */
+             */
             lectorFichero.close();
             
             /**
