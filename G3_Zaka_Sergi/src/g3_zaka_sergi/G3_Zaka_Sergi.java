@@ -6,7 +6,11 @@
 package g3_zaka_sergi;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -20,11 +24,15 @@ public class G3_Zaka_Sergi {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        leerFichero();
-        añadirLinea();
-        modificarLinea();
-        eliminarLinea();
-
+        //leerFichero();
+        //añadirLinea();
+        //modificarLinea();
+        //eliminarLinea();
+        //crearUsuarios();
+        //leerUsuarios();
+        //login();
+        //menuTeacher();
+        menuAdmin();
     }
 
     public static void leerFichero() {
@@ -126,7 +134,7 @@ public class G3_Zaka_Sergi {
         }
 
         Scanner lector = new Scanner(System.in);
-        
+
         //Pedimos la clase a modificar y contamos el numero de caracteres que tiene el String clase
         System.out.println("");
         System.out.println("--MODIFICA UNA CLASE--");
@@ -192,7 +200,7 @@ public class G3_Zaka_Sergi {
         } catch (Exception e) {
             System.out.println("Ha ocurrido un error al abrir/leer el fichero");
         }
-        
+
         Scanner lector = new Scanner(System.in);
 
         System.out.println("");
@@ -201,8 +209,7 @@ public class G3_Zaka_Sergi {
         String clase = lector.next();
         int longitud = clase.length();
         lector.nextLine();
-        
-        
+
         // Abrimos el fichero de texto para sobreescribirlo
         // Eliminaremos la línea 3
         try {
@@ -218,6 +225,177 @@ public class G3_Zaka_Sergi {
         } catch (Exception e) {
             System.out.println("Ha ocurrido un error al abrir/sobreescribir el fichero");
         }
+    }
+
+    public static void crearUsuarios() {
+        Scanner lector = new Scanner(System.in);
+        //CREAR FICHERO BINARIO
+        try {
+            ObjectOutputStream fichero = new ObjectOutputStream(new FileOutputStream("files/users.dat"));
+
+            //Creamos un array de usuaios
+            //Por defecto, todas las posiciones del array valen null
+            User[] personal = new User[100];
+
+            //Creamos un nuevo empleado en la 1ª posición del array
+            personal[0] = new User();
+            personal[0].usuario = "Sergi";
+            personal[0].contraseña = "Admin2016.";
+            personal[0].rol = "Admin";
+
+            //Creamos un nuevo empleado en la 2ª posición del array
+            personal[1] = new User();
+            personal[1].usuario = "Zacarias";
+            personal[1].contraseña = "Teacher2016.";
+            personal[1].rol = "Teacher";
+
+            for (User usuario : personal) {
+                if (usuario.usuario.equals(null)) {
+                    System.out.println("");
+                    System.out.print("Nombre de usuario: ");
+                    usuario.usuario = lector.next();
+                    System.out.print("Contraseña: ");
+                    usuario.contraseña = lector.next();
+                    System.out.print("Rol: ");
+                    usuario.rol = lector.next();
+                }
+            }
+            //Con un writeObject escribimos directamente todo el array de Empleados
+            fichero.writeObject(personal);
+
+            //Cerramos el fichero
+            fichero.close();
+
+        } catch (Exception e) {
+            System.out.println("Ha ocurrido un error al crear/guardar el fichero");
+        }
+    }
+
+    public static void leerUsuarios() {
+        try {
+            ObjectInputStream fichero = new ObjectInputStream(new FileInputStream("files/users.dat"));
+
+            //Leemos un objecto del fichero
+            User[] personal = (User[]) fichero.readObject();
+
+            for (User usuario : personal) {
+                if (usuario != null) {
+                    System.out.println("");
+                    System.out.println("------------------------------");
+                    System.out.println("Usuario: " + usuario.usuario);
+                    System.out.println("Contrseña: " + usuario.contraseña);
+                    System.out.println("Rol: " + usuario.rol);
+                    System.out.println("------------------------------");
+                }
+            }
+
+            fichero.close();
+
+        } catch (Exception e) {
+            System.out.println("Ha ocurrido un error al crear/guardar el fichero");
+        }
+    }
+
+    public static void login() {
+        Scanner lector = new Scanner(System.in);
+        System.out.println("-------LOGIN-------");
+        System.out.println("");
+        String usuario, contraseña;
+        System.out.print("Usuario: ");
+        usuario = lector.next();
+        System.out.print("Contraseña: ");
+        contraseña = lector.next();
+
+        //Comprueba las credenciales del usuario y su rol para mostrar su respectivo menú
+        try {
+            ObjectInputStream fichero = new ObjectInputStream(new FileInputStream("files/users.dat"));
+
+            //Leemos un objecto del fichero
+            User[] users = (User[]) fichero.readObject();
+            boolean found = false;
+            for (User user : users) {
+
+                if (user != null && !found) {
+                    if (user.usuario.equals(usuario)) {
+                        if (user.contraseña.equals(contraseña)) {
+                            found = true;
+                            if (user.rol.equals("Admin")) {
+                                fichero.close();
+                                menuAdmin();
+                            } else if (user.rol.equals("Teacher")) {
+                                fichero.close();
+                                menuTeacher();
+                            }
+                        }
+                    }
+                }
+            }
+            if (!found) {
+                System.out.println("ERROR: El usuario o contraseña son incorrectos");
+            }
+        } catch (Exception e) {
+            System.out.println("Ha ocurrido un error al crear/guardar el fichero");
+            e.printStackTrace();
+        }
+    }
+
+    public static void menuAdmin() {
+        Scanner lector = new Scanner(System.in);
+        int opcion;
+        do {
+            System.out.println("");
+            System.out.println("-------MENÚ ADMIN-------");
+
+            System.out.println("");
+            System.out.println("1 - Crear Usuario");
+            System.out.println("2 - Listar Usuarios");
+            System.out.println("0 - Salir");
+            System.out.println("");
+            System.out.print("Que deseas hacer? ");
+            opcion = lector.nextInt();
+
+            if (opcion == 1) {
+                crearUsuarios();
+            } else if (opcion == 2) {
+                leerUsuarios();
+            } else if (opcion == 0) {
+            } else {
+                System.out.println("ERROR: Por favor elige una opción del 0 al 4");
+            }
+        } while (opcion != 0);
+
+    }
+
+    public static void menuTeacher() {
+        Scanner lector = new Scanner(System.in);
+        int opcion;
+        do {
+            System.out.println("");
+            System.out.println("-------MENÚ TEACHER-------");
+
+            System.out.println("");
+            System.out.println("1 - Ver información de las aulas");
+            System.out.println("2 - Añadir un aula nueva");
+            System.out.println("3 - Modificar un aula");
+            System.out.println("4 - Eliminar un aula");
+            System.out.println("0 - Salir");
+            System.out.println("");
+            System.out.print("Que deseas hacer? ");
+            opcion = lector.nextInt();
+
+            if (opcion == 1) {
+                leerFichero();
+            } else if (opcion == 2) {
+                añadirLinea();
+            } else if (opcion == 3) {
+                modificarLinea();
+            } else if (opcion == 4) {
+                eliminarLinea();
+            } else if (opcion == 0) {
+            } else {
+                System.out.println("ERROR: Por favor elige una opción del 0 al 4");
+            }
+        } while (opcion != 0);
     }
 
 }
