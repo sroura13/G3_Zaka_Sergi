@@ -23,16 +23,24 @@ public class G3_Zaka_Sergi {
     /**
      * @param args the command line arguments
      */
+    //Creamos un array de usuaios
+    //Por defecto, todas las posiciones del array valen null
+    static User[] personal;
+
     public static void main(String[] args) {
         //leerFichero();
         //añadirLinea();
         //modificarLinea();
         //eliminarLinea();
-        //crearUsuarios();
+        cargarUsuarios();
+        crearUsuariosBasicos();
+        //crearUsuario();
         //leerUsuarios();
-        //login();
+        //modificarUsuario();
+        //leerUsuarios();
+        login();
         //menuTeacher();
-        menuAdmin();
+        //menuAdmin();
     }
 
     public static void leerFichero() {
@@ -62,7 +70,8 @@ public class G3_Zaka_Sergi {
              * causa de algun error
              */
         } catch (Exception e) {
-            System.out.println("Ha ocurrido un error al abrir/leer el fichero");
+            System.out.println("");
+            System.out.println("Ha ocurrido un error al abrir/leer el fichero en leerFichero()");
         }
     }
 
@@ -109,7 +118,8 @@ public class G3_Zaka_Sergi {
 
             writer.close();
         } catch (Exception e) {
-            System.out.println("Ha ocurrido un error al crear/escribir en el fichero");
+            System.out.println("");
+            System.out.println("Ha ocurrido un error al crear/escribir en el fichero en añadirLinea()");
         }
     }
 
@@ -130,6 +140,7 @@ public class G3_Zaka_Sergi {
             lectorFichero.close();
 
         } catch (Exception e) {
+            System.out.println("");
             System.out.println("Ha ocurrido un error al abrir/leer el fichero");
         }
 
@@ -178,7 +189,8 @@ public class G3_Zaka_Sergi {
 
             writer.close();
         } catch (Exception e) {
-            System.out.println("Ha ocurrido un error al abrir/sobreescribir el fichero");
+            System.out.println("");
+            System.out.println("Ha ocurrido un error al abrir/sobreescribir el fichero en modificarLinea()");
         }
     }
 
@@ -198,7 +210,8 @@ public class G3_Zaka_Sergi {
 
             lectorFichero.close();
         } catch (Exception e) {
-            System.out.println("Ha ocurrido un error al abrir/leer el fichero");
+            System.out.println("");
+            System.out.println("Ha ocurrido un error al abrir/leer el fichero eliminarLinea()");
         }
 
         Scanner lector = new Scanner(System.in);
@@ -223,19 +236,15 @@ public class G3_Zaka_Sergi {
 
             writer.close();
         } catch (Exception e) {
+            System.out.println("");
             System.out.println("Ha ocurrido un error al abrir/sobreescribir el fichero");
         }
     }
 
-    public static void crearUsuarios() {
-        Scanner lector = new Scanner(System.in);
+    public static void crearUsuariosBasicos() {
         //CREAR FICHERO BINARIO
         try {
             ObjectOutputStream fichero = new ObjectOutputStream(new FileOutputStream("files/users.dat"));
-
-            //Creamos un array de usuaios
-            //Por defecto, todas las posiciones del array valen null
-            User[] personal = new User[100];
 
             //Creamos un nuevo empleado en la 1ª posición del array
             personal[0] = new User();
@@ -249,17 +258,6 @@ public class G3_Zaka_Sergi {
             personal[1].contraseña = "Teacher2016.";
             personal[1].rol = "Teacher";
 
-            for (User usuario : personal) {
-                if (usuario.usuario.equals(null)) {
-                    System.out.println("");
-                    System.out.print("Nombre de usuario: ");
-                    usuario.usuario = lector.next();
-                    System.out.print("Contraseña: ");
-                    usuario.contraseña = lector.next();
-                    System.out.print("Rol: ");
-                    usuario.rol = lector.next();
-                }
-            }
             //Con un writeObject escribimos directamente todo el array de Empleados
             fichero.writeObject(personal);
 
@@ -267,7 +265,79 @@ public class G3_Zaka_Sergi {
             fichero.close();
 
         } catch (Exception e) {
-            System.out.println("Ha ocurrido un error al crear/guardar el fichero");
+            System.out.println("");
+            System.out.println("Ha ocurrido un error al crear/guardar el fichero en crearUsuariosBasicos()");
+
+            e.printStackTrace();
+        }
+    }
+
+    public static void crearUsuario() {
+        Scanner lector = new Scanner(System.in);
+        //CREAR FICHERO BINARIO
+        try {
+            ObjectOutputStream fichero = new ObjectOutputStream(new FileOutputStream("files/users.dat"));
+            boolean insertar = false;
+            for (int i = 0; i < personal.length && !insertar; i++) {
+                if (personal[i] == null) {
+                    personal[i] = new User();
+                    System.out.println("");
+                    System.out.print("Nombre de usuario: ");
+                    personal[i].usuario = lector.next();
+                    System.out.print("Contraseña: ");
+                    personal[i].contraseña = lector.next();
+                    do {
+                        System.out.print("Rol (Teacher o Admin): ");
+                        personal[i].rol = lector.next();
+                        System.out.println("");
+                    } while (!personal[i].rol.equals("Teacher") && !personal[i].rol.equals("Admin"));
+                    insertar = true;
+                }
+            }
+            fichero.writeObject(personal);
+            fichero.close();
+
+        } catch (Exception e) {
+            System.out.println("");
+            System.out.println("Ha ocurrido un error al crear/guardar el fichero en crearUsuario()");
+            e.printStackTrace();
+        }
+    }
+
+    public static void modificarUsuario() {
+        Scanner lector = new Scanner(System.in);
+        //CREAR FICHERO BINARIO
+        try {
+            ObjectOutputStream fichero = new ObjectOutputStream(new FileOutputStream("files/users.dat"));
+            boolean insertar = false;
+            boolean existe = false;
+            String usuario;
+            System.out.println("");
+            System.out.print("Que usuario quieres modificar: ");
+            usuario = lector.next();
+            for (int i = 0; i < personal.length && !insertar; i++) {
+                if (personal[i].usuario.equals(usuario)) {
+                    personal[i] = new User();
+                    System.out.println("");
+                    System.out.print("Nuevo nombre de usuario: ");
+                    personal[i].usuario = lector.next();
+                    System.out.print("Nueva contraseña: ");
+                    personal[i].contraseña = lector.next();
+                    do {
+                        System.out.print("Rol (Teacher o Admin): ");
+                        personal[i].rol = lector.next();
+                        System.out.println("");
+                    } while (!personal[i].rol.equals("Teacher") && !personal[i].rol.equals("Admin"));
+                    insertar = true;
+                }
+            }
+            fichero.writeObject(personal);
+            fichero.close();
+
+        } catch (Exception e) {
+            System.out.println("");
+            System.out.println("Ha ocurrido un error al crear/guardar el fichero en modificarUsuario()");
+            e.printStackTrace();
         }
     }
 
@@ -292,12 +362,30 @@ public class G3_Zaka_Sergi {
             fichero.close();
 
         } catch (Exception e) {
-            System.out.println("Ha ocurrido un error al crear/guardar el fichero");
+            System.out.println("");
+            System.out.println("Ha ocurrido un error al crear/guardar el fichero en leerUsuarios()");
+        }
+    }
+
+    public static void cargarUsuarios() {
+        personal = new User[100];
+        try {
+            ObjectInputStream fichero = new ObjectInputStream(new FileInputStream("files/users.dat"));
+
+            //Leemos un objecto del fichero
+            personal = (User[]) fichero.readObject();
+
+            fichero.close();
+
+        } catch (Exception e) {
+            System.out.println("");
+            System.out.println("Ha ocurrido un error al crear/guardar el fichero en leerUsuarios()");
         }
     }
 
     public static void login() {
         Scanner lector = new Scanner(System.in);
+        System.out.println("");
         System.out.println("-------LOGIN-------");
         System.out.println("");
         String usuario, contraseña;
@@ -313,6 +401,7 @@ public class G3_Zaka_Sergi {
             //Leemos un objecto del fichero
             User[] users = (User[]) fichero.readObject();
             boolean found = false;
+
             for (User user : users) {
 
                 if (user != null && !found) {
@@ -331,10 +420,13 @@ public class G3_Zaka_Sergi {
                 }
             }
             if (!found) {
+                System.out.println("");
                 System.out.println("ERROR: El usuario o contraseña son incorrectos");
+                login();
             }
         } catch (Exception e) {
-            System.out.println("Ha ocurrido un error al crear/guardar el fichero");
+            System.out.println("");
+            System.out.println("Ha ocurrido un error al iniciar sesión login()");
             e.printStackTrace();
         }
     }
@@ -348,15 +440,18 @@ public class G3_Zaka_Sergi {
 
             System.out.println("");
             System.out.println("1 - Crear Usuario");
-            System.out.println("2 - Listar Usuarios");
+            System.out.println("2 - Modificar Usuario");
+            System.out.println("3 - Listar Usuarios");
             System.out.println("0 - Salir");
             System.out.println("");
             System.out.print("Que deseas hacer? ");
             opcion = lector.nextInt();
 
             if (opcion == 1) {
-                crearUsuarios();
+                crearUsuario();
             } else if (opcion == 2) {
+                modificarUsuario();
+            } else if (opcion == 3) {
                 leerUsuarios();
             } else if (opcion == 0) {
             } else {
