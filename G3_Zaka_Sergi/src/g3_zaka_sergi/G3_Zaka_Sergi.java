@@ -26,6 +26,7 @@ public class G3_Zaka_Sergi {
     //Creamos un array de usuaios
     //Por defecto, todas las posiciones del array valen null
     static User[] personal;
+    static String usuarioInciado;
 
     public static void main(String[] args) {
         //leerFichero();
@@ -33,7 +34,7 @@ public class G3_Zaka_Sergi {
         //modificarLinea();
         //eliminarLinea();
         cargarUsuarios();
-        crearUsuariosBasicos();
+        //crearUsuariosBasicos();
         //crearUsuario();
         //leerUsuarios();
         //modificarUsuario();
@@ -267,8 +268,6 @@ public class G3_Zaka_Sergi {
         } catch (Exception e) {
             System.out.println("");
             System.out.println("Ha ocurrido un error al crear/guardar el fichero en crearUsuariosBasicos()");
-
-            e.printStackTrace();
         }
     }
 
@@ -300,7 +299,6 @@ public class G3_Zaka_Sergi {
         } catch (Exception e) {
             System.out.println("");
             System.out.println("Ha ocurrido un error al crear/guardar el fichero en crearUsuario()");
-            e.printStackTrace();
         }
     }
 
@@ -310,26 +308,36 @@ public class G3_Zaka_Sergi {
         try {
             ObjectOutputStream fichero = new ObjectOutputStream(new FileOutputStream("files/users.dat"));
             boolean insertar = false;
-            boolean existe = false;
             String usuario;
             System.out.println("");
             System.out.print("Que usuario quieres modificar: ");
             usuario = lector.next();
-            for (int i = 0; i < personal.length && !insertar; i++) {
-                if (personal[i].usuario.equals(usuario)) {
-                    personal[i] = new User();
-                    System.out.println("");
-                    System.out.print("Nuevo nombre de usuario: ");
-                    personal[i].usuario = lector.next();
-                    System.out.print("Nueva contraseña: ");
-                    personal[i].contraseña = lector.next();
-                    do {
-                        System.out.print("Rol (Teacher o Admin): ");
-                        personal[i].rol = lector.next();
-                        System.out.println("");
-                    } while (!personal[i].rol.equals("Teacher") && !personal[i].rol.equals("Admin"));
-                    insertar = true;
+            boolean usuarioExiste = false;
+            for (int i = 0; i < personal.length; i++) {
+                if (personal[i]!= null && personal[i].usuario.equals(usuario)) {
+                    usuarioExiste = true;
                 }
+            }
+            if (usuarioExiste == true) {
+                for (int i = 0; i < personal.length && !insertar; i++) {
+                    if (personal[i].usuario.equals(usuario)) {
+                        System.out.println("");
+                        System.out.print("Nuevo nombre de usuario: ");
+                        personal[i].usuario = lector.next();
+                        System.out.print("Nueva contraseña: ");
+                        personal[i].contraseña = lector.next();
+                        do {
+                            System.out.print("Rol (Teacher o Admin): ");
+                            personal[i].rol = lector.next();
+                            System.out.println("");
+                        } while (!personal[i].rol.equals("Teacher") && !personal[i].rol.equals("Admin"));
+                        insertar = true;
+                    }
+                }
+            } else {
+                System.out.println("");
+                System.out.println("ERROR: El usuario indicado no existe");
+                modificarUsuario();
             }
             fichero.writeObject(personal);
             fichero.close();
@@ -337,7 +345,76 @@ public class G3_Zaka_Sergi {
         } catch (Exception e) {
             System.out.println("");
             System.out.println("Ha ocurrido un error al crear/guardar el fichero en modificarUsuario()");
-            e.printStackTrace();
+        }
+    }
+
+    public static void eliminarUsuario() {
+        Scanner lector = new Scanner(System.in);
+        //CREAR FICHERO BINARIO
+        try {
+            ObjectOutputStream fichero = new ObjectOutputStream(new FileOutputStream("files/users.dat"));
+            String usuario, usuarioEliminado;
+            boolean errorEliminarUsuario = false;
+            int contadorAdmins = 0;
+            System.out.println("");
+            System.out.print("Que usuario quieres eliminar: ");
+            usuario = lector.next();
+            usuarioEliminado = usuario;
+            boolean usuarioExiste = false;
+            for (int i = 0; i < personal.length; i++) {
+                if (personal[i]!= null && personal[i].usuario.equals(usuario)) {
+                    usuarioExiste = true;
+                }
+            }
+            if (usuarioExiste == true) {
+            //Bucle que cuenta cuntos usuarios Admin existen y los guarda en el contador contadorAdmins
+            for (int i = 0; i < personal.length; i++) {
+                if (personal[i] != null && personal[i].rol.equals("Admin")) {
+                    contadorAdmins++;
+                }
+            }
+
+            for (int i = 0; i < personal.length; i++) {
+                //Elimina un usuario Teacher
+                if (personal[i] != null && personal[i].usuario.equals(usuario) && personal[i].rol.equals("Teacher")) {
+                    personal[i].usuario = "";
+                    personal[i].contraseña = "";
+                    personal[i].rol = "";
+                    personal[i] = null;
+                    System.out.println("");
+                    System.out.println("EL ususario " + usuarioEliminado + " se ha eliminado.");
+                } //Elimina el usuario Admin indicado siempre y cuando el contador de Admin sea mayor que 1
+                else if (personal[i] != null && personal[i].usuario.equals(usuario) && personal[i].rol.equals("Admin") && contadorAdmins > 1) {
+                    personal[i].usuario = "";
+                    personal[i].contraseña = "";
+                    personal[i].rol = "";
+                    personal[i] = null;
+                    System.out.println("");
+                    System.out.println("El ususario " + usuarioEliminado + " se ha eliminado.");
+                    if (usuarioEliminado.equals(usuarioInciado)) {
+                        login();
+                    }
+                }
+
+                if (contadorAdmins > 1) {
+                    errorEliminarUsuario = true;
+                }
+            }
+
+            if (!errorEliminarUsuario) {
+                System.out.println("ERROR: El usuario " + usuarioEliminado + " no se ha podido elminar porque es el único Administrador");
+            }
+            } else {
+                System.out.println("");
+                System.out.println("ERROR: El usuario indicado no existe");
+                eliminarUsuario();
+            }
+            fichero.writeObject(personal);
+            fichero.close();
+
+        } catch (Exception e) {
+            System.out.println("");
+            System.out.println("Ha ocurrido un error al crear/guardar el fichero en modificarUsuario()");
         }
     }
 
@@ -349,7 +426,7 @@ public class G3_Zaka_Sergi {
             User[] personal = (User[]) fichero.readObject();
 
             for (User usuario : personal) {
-                if (usuario != null) {
+                if (usuario != null && !usuario.usuario.isEmpty()) {
                     System.out.println("");
                     System.out.println("------------------------------");
                     System.out.println("Usuario: " + usuario.usuario);
@@ -391,6 +468,7 @@ public class G3_Zaka_Sergi {
         String usuario, contraseña;
         System.out.print("Usuario: ");
         usuario = lector.next();
+        usuarioInciado = usuario;
         System.out.print("Contraseña: ");
         contraseña = lector.next();
 
@@ -427,7 +505,6 @@ public class G3_Zaka_Sergi {
         } catch (Exception e) {
             System.out.println("");
             System.out.println("Ha ocurrido un error al iniciar sesión login()");
-            e.printStackTrace();
         }
     }
 
@@ -437,11 +514,12 @@ public class G3_Zaka_Sergi {
         do {
             System.out.println("");
             System.out.println("-------MENÚ ADMIN-------");
-
+            System.out.println("Usuario: " + usuarioInciado);
             System.out.println("");
             System.out.println("1 - Crear Usuario");
             System.out.println("2 - Modificar Usuario");
-            System.out.println("3 - Listar Usuarios");
+            System.out.println("3 - Eliminar un Usuario");
+            System.out.println("4 - Listar Usuarios");
             System.out.println("0 - Salir");
             System.out.println("");
             System.out.print("Que deseas hacer? ");
@@ -452,8 +530,11 @@ public class G3_Zaka_Sergi {
             } else if (opcion == 2) {
                 modificarUsuario();
             } else if (opcion == 3) {
+                eliminarUsuario();
+            } else if (opcion == 4) {
                 leerUsuarios();
             } else if (opcion == 0) {
+                login();
             } else {
                 System.out.println("ERROR: Por favor elige una opción del 0 al 4");
             }
@@ -467,7 +548,7 @@ public class G3_Zaka_Sergi {
         do {
             System.out.println("");
             System.out.println("-------MENÚ TEACHER-------");
-
+            System.out.println("Usuario: " + usuarioInciado);
             System.out.println("");
             System.out.println("1 - Ver información de las aulas");
             System.out.println("2 - Añadir un aula nueva");
@@ -487,6 +568,7 @@ public class G3_Zaka_Sergi {
             } else if (opcion == 4) {
                 eliminarLinea();
             } else if (opcion == 0) {
+                login();
             } else {
                 System.out.println("ERROR: Por favor elige una opción del 0 al 4");
             }
