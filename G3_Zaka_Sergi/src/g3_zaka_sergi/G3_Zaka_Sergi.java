@@ -424,6 +424,7 @@ public class G3_Zaka_Sergi {
 
             //Leemos un objecto del fichero
             User[] personal = (User[]) fichero.readObject();
+             
 
             for (User usuario : personal) {
                 if (usuario != null && !usuario.usuario.isEmpty()) {
@@ -532,7 +533,7 @@ public class G3_Zaka_Sergi {
             } else if (opcion == 3) {
                 eliminarUsuario();
             } else if (opcion == 4) {
-                leerUsuarios();
+                menuListarUsuarios();
             } else if (opcion == 0) {
                 login();
             } else {
@@ -573,6 +574,36 @@ public class G3_Zaka_Sergi {
                 System.out.println("ERROR: Por favor elige una opción del 0 al 4");
             }
         } while (opcion != 0);
+    }
+    public static void menuListarUsuarios(){
+    int opcion;
+            do {
+                Scanner lector = new Scanner (System.in);
+                System.out.println("");
+                System.out.println("Que quieres mostrar: ");
+                System.out.println("");
+                System.out.println("1 - Mostrar todos los usuarios");
+                System.out.println("2 - Mostrar usuarios administradores");
+                System.out.println("3 - Mostrar usuarios teachers");
+                System.out.println("0 - Salir");
+                System.out.println("");
+                System.out.print("Que deseas hacer: ");
+                opcion = lector.nextInt();
+                
+                if (opcion == 1) {
+                leerUsuarios();
+            } else if (opcion == 2) {
+                //leerUsuariosAdmin();
+            } else if (opcion == 3) {
+                //leerUsuariosTeacher;
+            } else if (opcion == 0) {
+                menuAdmin();
+            } else {
+                System.out.println("ERROR: Por favor elige una opción del 0 al 4");
+            }
+                
+            } while (opcion != 0);
+    
     }
 
 }
