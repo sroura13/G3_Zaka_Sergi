@@ -44,7 +44,7 @@ public class G3_Zaka_Sergi {
         //menuAdmin();
     }
 
-    public static void leerFichero() {
+    public static void leerFicheroAulas() {
         File fichero = new File("files/classrooms.csv");
 
         try {
@@ -72,7 +72,39 @@ public class G3_Zaka_Sergi {
              */
         } catch (Exception e) {
             System.out.println("");
-            System.out.println("Ha ocurrido un error al abrir/leer el fichero en leerFichero()");
+            System.out.println("Ha ocurrido un error al abrir/leer el fichero en leerFicheroAulas()");
+        }
+    }
+
+    public static void leerFicheroProgramas() {
+        File fichero = new File("files/programs.csv");
+
+        try {
+            /*
+            * ISO-8859-1 Sirve para que al momento de ejecutar el programa
+            * no falle a causa de un fichero con palabras con acentos
+            * Scanner lectorFichero = new Scanner(fichero, "ISO-8859-1");
+             */
+            Scanner lectorFichero = new Scanner(fichero);
+
+            while (lectorFichero.hasNext()) {
+                String programa = lectorFichero.nextLine();
+                imprimirProgramas(programa);
+            }
+
+            /**
+             * Este lector sirve para poder cerrar el fichero, aunque java ya
+             * cierra el fichero de por si
+             */
+            lectorFichero.close();
+
+            /**
+             * Control de errores por si el fichero no se ha podido abrir a
+             * causa de algun error
+             */
+        } catch (Exception e) {
+            System.out.println("");
+            System.out.println("Ha ocurrido un error al abrir/leer el fichero en leerFicheroProgramas()");
         }
     }
 
@@ -80,15 +112,26 @@ public class G3_Zaka_Sergi {
 
         //Dividimos los datos por comas y lo guardamos en una array
         String[] datosAula = aula.split(",");
-        int i = 0;
 
+        System.out.println("--------------------------------------------------------------------------------------------------------------------------------------------------");
         //Imprimimos los datos
-        System.out.println("Clase: " + datosAula[i] + ", Información del aula: " + datosAula[i + 1] + ", Capacidad máxima de alumnos: " + datosAula[i + 2]
-                + ", Hay PC's: " + datosAula[i + 3] + ", Nº PC's: " + datosAula[i + 4] + ", Hay proyector: " + datosAula[i + 5]
-                + ", Clase insonorizada: " + datosAula[i + 6]);
+        System.out.println("Clase: " + datosAula[0] + ", Información del aula: " + datosAula[1] + ", Capacidad máxima de alumnos: " + datosAula[2]
+                + ", Hay PC's: " + datosAula[3] + ", Nº PC's: " + datosAula[4] + ", Hay proyector: " + datosAula[5]
+                + ", Clase insonorizada: " + datosAula[6]);
     }
 
-    public static void añadirLinea() {
+    private static void imprimirProgramas(String programa) {
+
+        //Dividimos los datos por comas y lo guardamos en una array
+        String[] datosPrograma = programa.split(",");
+
+        System.out.println("------------------------------------------------------------------------------------------------------------------------");
+        //Imprimimos los datos
+        System.out.println("Clase: " + datosPrograma[0] + ", Programa 1: " + datosPrograma[1] + ", Programa 2: " + datosPrograma[2]
+                + ", Programa 3: " + datosPrograma[3] + ", Programa 4: " + datosPrograma[4]);
+    }
+
+    public static void añadirLineaAula() {
         File fichero = new File("files/classrooms.csv");
         Scanner lector = new Scanner(System.in);
         String[] datos = new String[7];
@@ -124,7 +167,7 @@ public class G3_Zaka_Sergi {
         }
     }
 
-    public static void modificarLinea() {
+    public static void modificarLineaAula() {
         File fichero = new File("files/classrooms.csv");
 
         // Array para guardar todas las líneas leídas del fichero
@@ -183,6 +226,70 @@ public class G3_Zaka_Sergi {
             for (String linea : lineas) {
                 if (clase.equals(linea.substring(0, longitud))) {
                     writer.write(datos[0] + "," + datos[1] + "," + datos[2] + "," + datos[3] + "," + datos[4] + "," + datos[5] + "," + datos[6] + "\n");
+                } else {
+                    writer.write(linea + "\n");
+                }
+            }
+
+            writer.close();
+        } catch (Exception e) {
+            System.out.println("");
+            System.out.println("Ha ocurrido un error al abrir/sobreescribir el fichero en modificarLinea()");
+        }
+    }
+    
+    public static void modificarLineaPrograma() {
+        File fichero = new File("files/programs.csv");
+
+        // Array para guardar todas las líneas leídas del fichero
+        ArrayList<String> lineas = new ArrayList<>();
+
+        // Abrimos el fichero de texto para leerlo en memoria
+        try {
+            Scanner lectorFichero = new Scanner(fichero);
+
+            while (lectorFichero.hasNext()) {
+                lineas.add(lectorFichero.nextLine());
+            }
+
+            lectorFichero.close();
+
+        } catch (Exception e) {
+            System.out.println("");
+            System.out.println("Ha ocurrido un error al abrir/leer el fichero");
+        }
+
+        Scanner lector = new Scanner(System.in);
+
+        //Pedimos la clase a modificar y contamos el numero de caracteres que tiene el String clase
+        System.out.println("");
+        System.out.println("--MODIFICA LOS PROGRAMAS DE UN CURSO--");
+        System.out.print("Que curso quieres modificar: ");
+        String curso = lector.next();
+        int longitud = curso.length();
+        lector.nextLine();
+
+        String[] datos = new String[7];
+        //Pedimos que el usuario introduzca los datos de la clase
+        System.out.println("");
+        System.out.println("--NUEVOS CAMPOS--");
+        System.out.print("Programa 1: ");
+        datos[1] = lector.nextLine();
+        System.out.print("Programa 2: ");
+        datos[2] = lector.nextLine();
+        System.out.print("Programa 3: ");
+        datos[3] = lector.nextLine();
+        System.out.print("Programa 4: ");
+        datos[4] = lector.nextLine();
+
+        // Abrimos el fichero de texto para sobreescribirlo
+        // Actualizaremos la línea 4
+        try {
+            FileWriter writer = new FileWriter(fichero);
+
+            for (String linea : lineas) {
+                if (curso.equals(linea.substring(0, longitud))) {
+                    writer.write(datos[0] + "," + datos[1] + "," + datos[2] + "," + datos[3] + "," + datos[4] + "\n");
                 } else {
                     writer.write(linea + "\n");
                 }
@@ -314,7 +421,7 @@ public class G3_Zaka_Sergi {
             usuario = lector.next();
             boolean usuarioExiste = false;
             for (int i = 0; i < personal.length; i++) {
-                if (personal[i]!= null && personal[i].usuario.equals(usuario)) {
+                if (personal[i] != null && personal[i].usuario.equals(usuario)) {
                     usuarioExiste = true;
                 }
             }
@@ -362,48 +469,48 @@ public class G3_Zaka_Sergi {
             usuarioEliminado = usuario;
             boolean usuarioExiste = false;
             for (int i = 0; i < personal.length; i++) {
-                if (personal[i]!= null && personal[i].usuario.equals(usuario)) {
+                if (personal[i] != null && personal[i].usuario.equals(usuario)) {
                     usuarioExiste = true;
                 }
             }
             if (usuarioExiste == true) {
-            //Bucle que cuenta cuntos usuarios Admin existen y los guarda en el contador contadorAdmins
-            for (int i = 0; i < personal.length; i++) {
-                if (personal[i] != null && personal[i].rol.equals("Admin")) {
-                    contadorAdmins++;
-                }
-            }
-
-            for (int i = 0; i < personal.length; i++) {
-                //Elimina un usuario Teacher
-                if (personal[i] != null && personal[i].usuario.equals(usuario) && personal[i].rol.equals("Teacher")) {
-                    personal[i].usuario = "";
-                    personal[i].contraseña = "";
-                    personal[i].rol = "";
-                    personal[i] = null;
-                    System.out.println("");
-                    System.out.println("EL ususario " + usuarioEliminado + " se ha eliminado.");
-                } //Elimina el usuario Admin indicado siempre y cuando el contador de Admin sea mayor que 1
-                else if (personal[i] != null && personal[i].usuario.equals(usuario) && personal[i].rol.equals("Admin") && contadorAdmins > 1) {
-                    personal[i].usuario = "";
-                    personal[i].contraseña = "";
-                    personal[i].rol = "";
-                    personal[i] = null;
-                    System.out.println("");
-                    System.out.println("El ususario " + usuarioEliminado + " se ha eliminado.");
-                    if (usuarioEliminado.equals(usuarioInciado)) {
-                        login();
+                //Bucle que cuenta cuntos usuarios Admin existen y los guarda en el contador contadorAdmins
+                for (int i = 0; i < personal.length; i++) {
+                    if (personal[i] != null && personal[i].rol.equals("Admin")) {
+                        contadorAdmins++;
                     }
                 }
 
-                if (contadorAdmins > 1) {
-                    errorEliminarUsuario = true;
-                }
-            }
+                for (int i = 0; i < personal.length; i++) {
+                    //Elimina un usuario Teacher
+                    if (personal[i] != null && personal[i].usuario.equals(usuario) && personal[i].rol.equals("Teacher")) {
+                        personal[i].usuario = "";
+                        personal[i].contraseña = "";
+                        personal[i].rol = "";
+                        personal[i] = null;
+                        System.out.println("");
+                        System.out.println("EL ususario " + usuarioEliminado + " se ha eliminado.");
+                    } //Elimina el usuario Admin indicado siempre y cuando el contador de Admin sea mayor que 1
+                    else if (personal[i] != null && personal[i].usuario.equals(usuario) && personal[i].rol.equals("Admin") && contadorAdmins > 1) {
+                        personal[i].usuario = "";
+                        personal[i].contraseña = "";
+                        personal[i].rol = "";
+                        personal[i] = null;
+                        System.out.println("");
+                        System.out.println("El ususario " + usuarioEliminado + " se ha eliminado.");
+                        if (usuarioEliminado.equals(usuarioInciado)) {
+                            login();
+                        }
+                    }
 
-            if (!errorEliminarUsuario) {
-                System.out.println("ERROR: El usuario " + usuarioEliminado + " no se ha podido elminar porque es el único Administrador");
-            }
+                    if (contadorAdmins > 1) {
+                        errorEliminarUsuario = true;
+                    }
+                }
+
+                if (!errorEliminarUsuario) {
+                    System.out.println("ERROR: El usuario " + usuarioEliminado + " no se ha podido elminar porque es el único Administrador");
+                }
             } else {
                 System.out.println("");
                 System.out.println("ERROR: El usuario indicado no existe");
@@ -424,10 +531,67 @@ public class G3_Zaka_Sergi {
 
             //Leemos un objecto del fichero
             User[] personal = (User[]) fichero.readObject();
-             
 
+            System.out.println("");
+            System.out.println("------TODOS LOS USUARIOS------");
             for (User usuario : personal) {
                 if (usuario != null && !usuario.usuario.isEmpty()) {
+                    System.out.println("");
+                    System.out.println("------------------------------");
+                    System.out.println("Usuario: " + usuario.usuario);
+                    System.out.println("Contrseña: " + usuario.contraseña);
+                    System.out.println("Rol: " + usuario.rol);
+                    System.out.println("------------------------------");
+                }
+            }
+
+            fichero.close();
+
+        } catch (Exception e) {
+            System.out.println("");
+            System.out.println("Ha ocurrido un error al crear/guardar el fichero en leerUsuarios()");
+        }
+    }
+
+    public static void leerUsuariosAdmin() {
+        try {
+            ObjectInputStream fichero = new ObjectInputStream(new FileInputStream("files/users.dat"));
+
+            //Leemos un objecto del fichero
+            User[] personal = (User[]) fichero.readObject();
+
+            System.out.println("");
+            System.out.println("------USUARIOS ADMINISTRADORES------");
+            for (User usuario : personal) {
+                if (usuario != null && !usuario.usuario.isEmpty() && usuario.rol.equals("Admin")) {
+                    System.out.println("");
+                    System.out.println("------------------------------");
+                    System.out.println("Usuario: " + usuario.usuario);
+                    System.out.println("Contrseña: " + usuario.contraseña);
+                    System.out.println("Rol: " + usuario.rol);
+                    System.out.println("------------------------------");
+                }
+            }
+
+            fichero.close();
+
+        } catch (Exception e) {
+            System.out.println("");
+            System.out.println("Ha ocurrido un error al crear/guardar el fichero en leerUsuarios()");
+        }
+    }
+
+    public static void leerUsuariosTeacher() {
+        try {
+            ObjectInputStream fichero = new ObjectInputStream(new FileInputStream("files/users.dat"));
+
+            //Leemos un objecto del fichero
+            User[] personal = (User[]) fichero.readObject();
+
+            System.out.println("");
+            System.out.println("------USUARIOS TEACHER------");
+            for (User usuario : personal) {
+                if (usuario != null && !usuario.usuario.isEmpty() && usuario.rol.equals("Teacher")) {
                     System.out.println("");
                     System.out.println("------------------------------");
                     System.out.println("Usuario: " + usuario.usuario);
@@ -514,7 +678,7 @@ public class G3_Zaka_Sergi {
         int opcion;
         do {
             System.out.println("");
-            System.out.println("-------MENÚ ADMIN-------");
+            System.out.println("-----MENÚ ADMIN-----");
             System.out.println("Usuario: " + usuarioInciado);
             System.out.println("");
             System.out.println("1 - Crear Usuario");
@@ -548,62 +712,66 @@ public class G3_Zaka_Sergi {
         int opcion;
         do {
             System.out.println("");
-            System.out.println("-------MENÚ TEACHER-------");
+            System.out.println("--------MENÚ TEACHER--------");
             System.out.println("Usuario: " + usuarioInciado);
             System.out.println("");
             System.out.println("1 - Ver información de las aulas");
             System.out.println("2 - Añadir un aula nueva");
             System.out.println("3 - Modificar un aula");
             System.out.println("4 - Eliminar un aula");
+            System.out.println("5 - Ver información de los programas");
             System.out.println("0 - Salir");
             System.out.println("");
             System.out.print("Que deseas hacer? ");
             opcion = lector.nextInt();
 
             if (opcion == 1) {
-                leerFichero();
+                leerFicheroAulas();
             } else if (opcion == 2) {
-                añadirLinea();
+                añadirLineaAula();
             } else if (opcion == 3) {
-                modificarLinea();
+                modificarLineaAula();
             } else if (opcion == 4) {
                 eliminarLinea();
+            } else if (opcion == 5) {
+                leerFicheroProgramas();
             } else if (opcion == 0) {
                 login();
             } else {
-                System.out.println("ERROR: Por favor elige una opción del 0 al 4");
+                System.out.println("ERROR: Por favor elige una opción del 0 al 5");
             }
         } while (opcion != 0);
     }
-    public static void menuListarUsuarios(){
-    int opcion;
-            do {
-                Scanner lector = new Scanner (System.in);
-                System.out.println("");
-                System.out.println("Que quieres mostrar: ");
-                System.out.println("");
-                System.out.println("1 - Mostrar todos los usuarios");
-                System.out.println("2 - Mostrar usuarios administradores");
-                System.out.println("3 - Mostrar usuarios teachers");
-                System.out.println("0 - Salir");
-                System.out.println("");
-                System.out.print("Que deseas hacer: ");
-                opcion = lector.nextInt();
-                
-                if (opcion == 1) {
+
+    public static void menuListarUsuarios() {
+        int opcion;
+        do {
+            Scanner lector = new Scanner(System.in);
+            System.out.println("");
+            System.out.println("Que quieres mostrar: ");
+            System.out.println("");
+            System.out.println("1 - Mostrar todos los usuarios");
+            System.out.println("2 - Mostrar usuarios administradores");
+            System.out.println("3 - Mostrar usuarios teachers");
+            System.out.println("0 - Salir");
+            System.out.println("");
+            System.out.print("Que deseas hacer: ");
+            opcion = lector.nextInt();
+
+            if (opcion == 1) {
                 leerUsuarios();
             } else if (opcion == 2) {
-                //leerUsuariosAdmin();
+                leerUsuariosAdmin();
             } else if (opcion == 3) {
-                //leerUsuariosTeacher;
+                leerUsuariosTeacher();
             } else if (opcion == 0) {
                 menuAdmin();
             } else {
                 System.out.println("ERROR: Por favor elige una opción del 0 al 4");
             }
-                
-            } while (opcion != 0);
-    
+
+        } while (opcion != 0);
+
     }
 
 }
