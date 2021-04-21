@@ -34,7 +34,7 @@ public class G3_Zaka_Sergi {
         //modificarLinea();
         //eliminarLinea();
         cargarUsuarios();
-        //crearUsuariosBasicos();
+        crearUsuariosBasicos();
         //crearUsuario();
         //leerUsuarios();
         //modificarUsuario();
@@ -237,7 +237,7 @@ public class G3_Zaka_Sergi {
             System.out.println("Ha ocurrido un error al abrir/sobreescribir el fichero en modificarLinea()");
         }
     }
-    
+
     public static void modificarLineaPrograma() {
         File fichero = new File("files/programs.csv");
 
@@ -383,13 +383,25 @@ public class G3_Zaka_Sergi {
         //CREAR FICHERO BINARIO
         try {
             ObjectOutputStream fichero = new ObjectOutputStream(new FileOutputStream("files/users.dat"));
-            boolean insertar = false;
-            for (int i = 0; i < personal.length && !insertar; i++) {
+            boolean insertarUsuario = false;
+            boolean insertarNombreUsuario = false;
+            String nombreUsuario;
+            for (int i = 0; i < personal.length && !insertarUsuario; i++) {
                 if (personal[i] == null) {
                     personal[i] = new User();
-                    System.out.println("");
-                    System.out.print("Nombre de usuario: ");
-                    personal[i].usuario = lector.next();
+                    do {
+                        System.out.println("");
+                        System.out.print("Nombre de usuario: ");
+                        nombreUsuario = lector.next();
+                        System.out.println("");
+                        for (int j = 0; j < personal.length; j++) {
+                            if (personal[j] != null && personal[j].usuario.equals(nombreUsuario)) {
+                                System.out.println("ERROR: El usuario introducido ya existe");
+                                insertarNombreUsuario = true;
+                            }
+                        }
+                    } while (insertarNombreUsuario);
+                    personal[i].usuario = nombreUsuario;
                     System.out.print("Contraseña: ");
                     personal[i].contraseña = lector.next();
                     do {
@@ -397,7 +409,7 @@ public class G3_Zaka_Sergi {
                         personal[i].rol = lector.next();
                         System.out.println("");
                     } while (!personal[i].rol.equals("Teacher") && !personal[i].rol.equals("Admin"));
-                    insertar = true;
+                    insertarUsuario = true;
                 }
             }
             fichero.writeObject(personal);
@@ -406,6 +418,8 @@ public class G3_Zaka_Sergi {
         } catch (Exception e) {
             System.out.println("");
             System.out.println("Ha ocurrido un error al crear/guardar el fichero en crearUsuario()");
+            e.printStackTrace();
+
         }
     }
 
@@ -685,6 +699,7 @@ public class G3_Zaka_Sergi {
             System.out.println("2 - Modificar Usuario");
             System.out.println("3 - Eliminar un Usuario");
             System.out.println("4 - Listar Usuarios");
+            System.out.println("5 - Cerrar sesión");
             System.out.println("0 - Salir");
             System.out.println("");
             System.out.print("Que deseas hacer? ");
@@ -698,8 +713,10 @@ public class G3_Zaka_Sergi {
                 eliminarUsuario();
             } else if (opcion == 4) {
                 menuListarUsuarios();
-            } else if (opcion == 0) {
+            } else if (opcion == 5) {
                 login();
+            } else if (opcion == 0) {
+                System.exit(0);
             } else {
                 System.out.println("ERROR: Por favor elige una opción del 0 al 4");
             }
@@ -720,6 +737,7 @@ public class G3_Zaka_Sergi {
             System.out.println("3 - Modificar un aula");
             System.out.println("4 - Eliminar un aula");
             System.out.println("5 - Ver información de los programas");
+            System.out.println("6 - Cerrar sesión");
             System.out.println("0 - Salir");
             System.out.println("");
             System.out.print("Que deseas hacer? ");
@@ -735,8 +753,10 @@ public class G3_Zaka_Sergi {
                 eliminarLinea();
             } else if (opcion == 5) {
                 leerFicheroProgramas();
-            } else if (opcion == 0) {
+            } else if (opcion == 6) {
                 login();
+            } else if (opcion == 0) {
+                System.exit(0);
             } else {
                 System.out.println("ERROR: Por favor elige una opción del 0 al 5");
             }
