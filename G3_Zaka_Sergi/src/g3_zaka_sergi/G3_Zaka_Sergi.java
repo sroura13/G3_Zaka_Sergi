@@ -432,19 +432,30 @@ public class G3_Zaka_Sergi {
         try {
             ObjectOutputStream fichero = new ObjectOutputStream(new FileOutputStream("files/users.dat"));
             boolean insertar = false;
+            boolean usuarioExiste = false;
+            boolean errorEliminarUsuario = false;
             String usuario;
             System.out.println("");
             System.out.print("Que usuario quieres modificar: ");
             usuario = lector.next();
-            boolean usuarioExiste = false;
+            String usuarioModificado = usuario;
+            int contadorAdmins = 0;
             for (int i = 0; i < personal.length; i++) {
                 if (personal[i] != null && personal[i].usuario.equals(usuario)) {
                     usuarioExiste = true;
                 }
             }
             if (usuarioExiste == true) {
-                for (int i = 0; i < personal.length && !insertar; i++) {
-                    if (personal[i].usuario.equals(usuario)) {
+                //Bucle que cuenta cuantos usuarios Admin existen y los guarda en el contador contadorAdmins
+                for (int i = 0; i < personal.length; i++) {
+                    if (personal[i] != null && personal[i].rol.equals("Admin")) {
+                        contadorAdmins++;
+                    }
+                }
+
+                for (int i = 0; i < personal.length; i++) {
+                    //Modificar un usuario Teacher
+                    if (personal[i] != null && personal[i].usuario.equals(usuario) && personal[i].rol.equals("Teacher")) {
                         System.out.println("");
                         System.out.print("Nuevo nombre de usuario: ");
                         personal[i].usuario = lector.next();
@@ -456,6 +467,27 @@ public class G3_Zaka_Sergi {
                             System.out.println("");
                         } while (!personal[i].rol.equals("Teacher") && !personal[i].rol.equals("Admin"));
                         insertar = true;
+                    } //Modifica el usuario Admin indicado siempre y cuando el contador de Admin sea mayor que 1
+                    else if (personal[i] != null && personal[i].usuario.equals(usuario) && personal[i].rol.equals("Admin")) {
+                        System.out.println("");
+                        System.out.print("Nuevo nombre de usuario: ");
+                        personal[i].usuario = lector.next();
+                        System.out.print("Nueva contraseña: ");
+                        personal[i].contraseña = lector.next();
+                        do {
+                            System.out.print("Rol (Teacher o Admin): ");
+                            personal[i].rol = lector.next();
+                            if (personal[i].rol.equals("Teacher") && contadorAdmins == 1) {
+                                System.out.println("ERROR: No se ha podido modificar el rol del usuario " + usuarioModificado
+                                        + " porque es el único Administrador");
+                                personal[i].rol = "Admin";
+                            }
+                            System.out.println("");
+                        } while (!personal[i].rol.equals("Teacher") && !personal[i].rol.equals("Admin"));
+                        insertar = true;
+                        if (usuarioModificado.equals(usuarioInciado)) {
+                            login();
+                        }
                     }
                 }
             } else {
@@ -477,16 +509,13 @@ public class G3_Zaka_Sergi {
         //CREAR FICHERO BINARIO
         try {
             ObjectOutputStream fichero = new ObjectOutputStream(new FileOutputStream("files/users.dat"));
-            String usuario, usuarioEliminado;
-            boolean errorEliminarUsuario = false;
-            int contadorAdmins = 0;
+            int contadorAdmins = 0, contadorUsuario = 0;
             System.out.println("");
             System.out.print("Que usuario quieres eliminar: ");
-            usuario = lector.next();
-            usuarioEliminado = usuario;
+            String usuarioEliminado = lector.next();
             boolean usuarioExiste = false;
             for (int i = 0; i < personal.length; i++) {
-                if (personal[i] != null && personal[i].usuario.equals(usuario)) {
+                if (personal[i] != null && personal[i].usuario.equals(usuarioEliminado)) {
                     usuarioExiste = true;
                 }
             }
@@ -500,7 +529,8 @@ public class G3_Zaka_Sergi {
 
                 for (int i = 0; i < personal.length; i++) {
                     //Elimina un usuario Teacher
-                    if (personal[i] != null && personal[i].usuario.equals(usuario) && personal[i].rol.equals("Teacher")) {
+                    if (personal[i] != null && personal[i].usuario.equals(usuarioEliminado) && personal[i].rol.equals("Teacher")) {
+                        contadorUsuario++;
                         personal[i].usuario = "";
                         personal[i].contraseña = "";
                         personal[i].rol = "";
@@ -508,7 +538,8 @@ public class G3_Zaka_Sergi {
                         System.out.println("");
                         System.out.println("EL ususario " + usuarioEliminado + " se ha eliminado.");
                     } //Elimina el usuario Admin indicado siempre y cuando el contador de Admin sea mayor que 1
-                    else if (personal[i] != null && personal[i].usuario.equals(usuario) && personal[i].rol.equals("Admin") && contadorAdmins > 1) {
+                    else if (personal[i] != null && personal[i].usuario.equals(usuarioEliminado) && personal[i].rol.equals("Admin") && contadorAdmins > 1) {
+                        contadorUsuario++;
                         personal[i].usuario = "";
                         personal[i].contraseña = "";
                         personal[i].rol = "";
@@ -520,12 +551,9 @@ public class G3_Zaka_Sergi {
                         }
                     }
 
-                    if (contadorAdmins > 1) {
-                        errorEliminarUsuario = true;
-                    }
                 }
 
-                if (!errorEliminarUsuario) {
+                if (contadorAdmins == 1 && personal[contadorUsuario] !=null && personal[contadorUsuario].rol.equals("Admin")) {
                     System.out.println("ERROR: El usuario " + usuarioEliminado + " no se ha podido elminar porque es el único Administrador");
                 }
             } else {
@@ -538,7 +566,8 @@ public class G3_Zaka_Sergi {
 
         } catch (Exception e) {
             System.out.println("");
-            System.out.println("Ha ocurrido un error al crear/guardar el fichero en modificarUsuario()");
+            System.out.println("Ha ocurrido un error al crear/guardar el fichero en eliminarUsuario()");
+            e.printStackTrace();
         }
     }
 
@@ -685,8 +714,6 @@ public class G3_Zaka_Sergi {
                 login();
             }
         } catch (Exception e) {
-            System.out.println("");
-            System.out.println("Ha ocurrido un error al iniciar sesión login()");
         }
     }
 
