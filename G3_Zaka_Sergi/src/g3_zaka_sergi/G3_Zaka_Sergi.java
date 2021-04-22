@@ -384,19 +384,21 @@ public class G3_Zaka_Sergi {
         try {
             ObjectOutputStream fichero = new ObjectOutputStream(new FileOutputStream("files/users.dat"));
             boolean insertarUsuario = false;
-            boolean insertarNombreUsuario = false;
+            boolean insertarNombreUsuario;
             String nombreUsuario;
             for (int i = 0; i < personal.length && !insertarUsuario; i++) {
                 if (personal[i] == null) {
                     personal[i] = new User();
                     do {
+                        insertarNombreUsuario = false;
                         System.out.println("");
                         System.out.print("Nombre de usuario: ");
                         nombreUsuario = lector.next();
                         System.out.println("");
                         for (int j = 0; j < personal.length; j++) {
-                            if (personal[j] != null && personal[j].usuario.equals(nombreUsuario)) {
+                            if (personal[j] != null && personal[j].usuario != null && personal[j].usuario.equals(nombreUsuario)) {
                                 System.out.println("ERROR: El usuario introducido ya existe");
+                                System.out.println("");
                                 insertarNombreUsuario = true;
                             }
                         }
@@ -404,6 +406,7 @@ public class G3_Zaka_Sergi {
                     personal[i].usuario = nombreUsuario;
                     System.out.print("Contraseña: ");
                     personal[i].contraseña = lector.next();
+                    System.out.println("");
                     do {
                         System.out.print("Rol (Teacher o Admin): ");
                         personal[i].rol = lector.next();
@@ -488,7 +491,7 @@ public class G3_Zaka_Sergi {
                 }
             }
             if (usuarioExiste == true) {
-                //Bucle que cuenta cuntos usuarios Admin existen y los guarda en el contador contadorAdmins
+                //Bucle que cuenta cuantos usuarios Admin existen y los guarda en el contador contadorAdmins
                 for (int i = 0; i < personal.length; i++) {
                     if (personal[i] != null && personal[i].rol.equals("Admin")) {
                         contadorAdmins++;
