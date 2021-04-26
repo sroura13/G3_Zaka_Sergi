@@ -389,10 +389,12 @@ public class G3_Zaka_Sergi {
             for (int i = 0; i < personal.length && !insertarUsuario; i++) {
                 if (personal[i] == null) {
                     personal[i] = new User();
+                    //Recorremos el array hasta que encontremos una posición que sea null, cuando encontremos esa posición, entonces es donde meteremos el usuario nuevo 
                     do {
                         insertarNombreUsuario = false;
                         System.out.println("");
                         System.out.print("Nombre de usuario: ");
+                        //Pedimos un nombre de usuario y comprobamos que este no existe
                         nombreUsuario = lector.next();
                         System.out.println("");
                         for (int j = 0; j < personal.length; j++) {
@@ -403,6 +405,7 @@ public class G3_Zaka_Sergi {
                             }
                         }
                     } while (insertarNombreUsuario);
+                    //Pedimos una contraseña una vez el nombre sea correcto
                     personal[i].usuario = nombreUsuario;
                     System.out.print("Contraseña: ");
                     personal[i].contraseña = lector.next();
@@ -411,6 +414,7 @@ public class G3_Zaka_Sergi {
                         System.out.print("Rol (Teacher o Admin): ");
                         personal[i].rol = lector.next();
                         System.out.println("");
+                        //Por ultimo pedimos que escriba su rol y comprobamos que el rol escrito sea Admin o Teacher
                     } while (!personal[i].rol.equals("Teacher") && !personal[i].rol.equals("Admin"));
                     insertarUsuario = true;
                 }
@@ -440,11 +444,13 @@ public class G3_Zaka_Sergi {
             usuario = lector.next();
             String usuarioModificado = usuario;
             int contadorAdmins = 0;
+            //Comprobamos que el usuario introducido existe y lo comprobamos con un booleano
             for (int i = 0; i < personal.length; i++) {
                 if (personal[i] != null && personal[i].usuario.equals(usuario)) {
                     usuarioExiste = true;
                 }
             }
+            
             if (usuarioExiste == true) {
                 //Bucle que cuenta cuantos usuarios Admin existen y los guarda en el contador contadorAdmins
                 for (int i = 0; i < personal.length; i++) {
@@ -452,7 +458,7 @@ public class G3_Zaka_Sergi {
                         contadorAdmins++;
                     }
                 }
-
+                //Si existe este usuario, entonces modificamos el usuario
                 for (int i = 0; i < personal.length; i++) {
                     //Modificar un usuario Teacher
                     if (personal[i] != null && personal[i].usuario.equals(usuario) && personal[i].rol.equals("Teacher")) {
@@ -461,6 +467,7 @@ public class G3_Zaka_Sergi {
                         personal[i].usuario = lector.next();
                         System.out.print("Nueva contraseña: ");
                         personal[i].contraseña = lector.next();
+                        
                         do {
                             System.out.print("Rol (Teacher o Admin): ");
                             personal[i].rol = lector.next();
@@ -478,6 +485,7 @@ public class G3_Zaka_Sergi {
                             System.out.print("Rol (Teacher o Admin): ");
                             personal[i].rol = lector.next();
                             if (personal[i].rol.equals("Teacher") && contadorAdmins == 1) {
+                                //Si intentamos borrar el ultimo usuario con el rol Admin le imprimimos por pantalla este error
                                 System.out.println("ERROR: No se ha podido modificar el rol del usuario " + usuarioModificado
                                         + " porque es el único Administrador");
                                 personal[i].rol = "Admin";
@@ -490,11 +498,13 @@ public class G3_Zaka_Sergi {
                         }
                     }
                 }
+                //Si no existe, le imprimimos por pantalla un error y volvemos a llamar a la función
             } else {
                 System.out.println("");
                 System.out.println("ERROR: El usuario indicado no existe");
                 modificarUsuario();
             }
+            
             fichero.writeObject(personal);
             fichero.close();
 
@@ -577,7 +587,7 @@ public class G3_Zaka_Sergi {
 
             //Leemos un objecto del fichero
             User[] personal = (User[]) fichero.readObject();
-
+            //Imprimimos todos los usuarios que existen
             System.out.println("");
             System.out.println("------TODOS LOS USUARIOS------");
             for (User usuario : personal) {
@@ -605,7 +615,7 @@ public class G3_Zaka_Sergi {
 
             //Leemos un objecto del fichero
             User[] personal = (User[]) fichero.readObject();
-
+            //Imprimimos todos los usuarios que tengan el rol Admin
             System.out.println("");
             System.out.println("------USUARIOS ADMINISTRADORES------");
             for (User usuario : personal) {
@@ -633,7 +643,7 @@ public class G3_Zaka_Sergi {
 
             //Leemos un objecto del fichero
             User[] personal = (User[]) fichero.readObject();
-
+            //Imprimimos todos los usuarios que tengan el rol Teacher
             System.out.println("");
             System.out.println("------USUARIOS TEACHER------");
             for (User usuario : personal) {
@@ -692,7 +702,7 @@ public class G3_Zaka_Sergi {
             boolean found = false;
 
             for (User user : users) {
-
+                //Comprueba las credenciales del usuario y su rol para mostrar su respectivo menú
                 if (user != null && !found) {
                     if (user.usuario.equals(usuario)) {
                         if (user.contraseña.equals(contraseña)) {
@@ -720,6 +730,7 @@ public class G3_Zaka_Sergi {
     public static void menuAdmin() {
         Scanner lector = new Scanner(System.in);
         int opcion;
+        //Imprimimos un menú con sus respectivas funciones dependiendo del rol
         do {
             System.out.println("");
             System.out.println("-----MENÚ ADMIN-----");
@@ -734,7 +745,8 @@ public class G3_Zaka_Sergi {
             System.out.println("");
             System.out.print("Que deseas hacer? ");
             opcion = lector.nextInt();
-
+            
+            //Llamamos a la función introducida por el usuario
             if (opcion == 1) {
                 crearUsuario();
             } else if (opcion == 2) {
@@ -757,6 +769,7 @@ public class G3_Zaka_Sergi {
     public static void menuTeacher() {
         Scanner lector = new Scanner(System.in);
         int opcion;
+        //Imprimimos un menú con sus respectivas funciones dependiendo del rol
         do {
             System.out.println("");
             System.out.println("--------MENÚ TEACHER--------");
@@ -772,7 +785,7 @@ public class G3_Zaka_Sergi {
             System.out.println("");
             System.out.print("Que deseas hacer? ");
             opcion = lector.nextInt();
-
+            
             if (opcion == 1) {
                 leerFicheroAulas();
             } else if (opcion == 2) {
@@ -795,6 +808,7 @@ public class G3_Zaka_Sergi {
 
     public static void menuListarUsuarios() {
         int opcion;
+        //Menú para listar todos los usuarios o dependiendo de su rol y una opción para poder volver atrás en el menú y no cerrar el programa
         do {
             Scanner lector = new Scanner(System.in);
             System.out.println("");
